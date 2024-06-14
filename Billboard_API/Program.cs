@@ -1,3 +1,4 @@
+using Billboard_BackEnd.Contracts;
 using Billboard_BackEnd.Services;
 using Serilog;
 
@@ -16,6 +17,7 @@ builder.Services.AddSwaggerGen();
 
 // Local Repo
 builder.Services.AddSingleton<IVehicleService, VehicleService>(_ => new VehicleService(config.GetConnectionString("LocalDb")));
+builder.Services.AddSingleton<IUserService, UserService>(_ => new UserService(config.GetConnectionString("LocalDb")));
 
 // Logger setup
 var log = new LoggerConfiguration()

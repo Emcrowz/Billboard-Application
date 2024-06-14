@@ -10,11 +10,6 @@ namespace Billboard_BackEnd.Services
         private readonly IVehicleDapperContext _dbRepoDapper;
         //private readonly IVehicleMongoDBContext _dbRepoMongo;
 
-        public VehicleService()
-        {
-            _dbRepoDapper = new VehicleRepository();
-        }
-
         public VehicleService(string connectionString)
         {
             _dbRepoDapper = new VehicleRepository(connectionString);
@@ -24,9 +19,9 @@ namespace Billboard_BackEnd.Services
         #region SERVICES RELATED TO LOCAL ACTIONS
         // public IEnumerable<Vehicle> GetAllVehicles() => _dbRepoDapper.ExecuteGetAllVehiclesRecords();
         public IEnumerable<Car> GetAllCars() => _dbRepoDapper.ExecuteFetchCarRecordsSQL();
-        public Car GetCarById(int id) => _dbRepoDapper.ExecuteFetchCarRecordByIdSQL(id);
+        public Car? GetCarById(int id) => _dbRepoDapper.ExecuteFetchCarRecordByIdSQL(id);
         public IEnumerable<Motorbike> GetAllMotorbikes() => _dbRepoDapper.ExecuteFetchMotorbikeRecordsSQL();
-        public Motorbike GetMotorbikeById(int id) => _dbRepoDapper.ExecuteFetchMotorbikeRecordByIdSQL(id);
+        public Motorbike? GetMotorbikeById(int id) => _dbRepoDapper.ExecuteFetchMotorbikeRecordByIdSQL(id);
         public List<Vehicle> GetAllVehiclesRecords()
         {
             var listOfCars = _dbRepoDapper.ExecuteFetchCarRecordsSQL().ToList();
