@@ -9,18 +9,12 @@ namespace Billboard_BackEnd.Repositories
     public class VehicleRepository : IVehicleDapperContext
     {
         #region SETUP / INITIALISATION
-        private readonly string  _connectionStringLocal = "Server=localhost;Database=BillboardApp;Trusted_Connection=True;TrustServerCertificate=True";
 
         private IDbConnection _dbConnectionLocal;
 
-        public VehicleRepository()
+        public VehicleRepository(string localDbConnectionString)
         {
-            _dbConnectionLocal = new SqlConnection(_connectionStringLocal);
-        }
-
-        public VehicleRepository(string specifiedConnection)
-        {
-            _dbConnectionLocal = new SqlConnection(specifiedConnection);
+            _dbConnectionLocal = new SqlConnection(localDbConnectionString);
         }
         #endregion
 

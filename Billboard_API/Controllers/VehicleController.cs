@@ -1,5 +1,5 @@
-﻿using Billboard_BackEnd.Models;
-using Billboard_BackEnd.Services;
+﻿using Billboard_BackEnd.Contracts;
+using Billboard_BackEnd.Models;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
