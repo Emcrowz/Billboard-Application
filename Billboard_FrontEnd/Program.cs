@@ -1,10 +1,26 @@
 using Billboard_FrontEnd.Components;
+using Billboard_FrontEnd.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<IWebAPIService, WebAPIService>(api => new WebAPIService("https://localhost:7243/"));
+
+// Logger setup
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddEnvironmentVariables()
+    .Build();
+
+var log = new LoggerConfiguration()
+    .ReadFrom.Configuration(config)
+    .CreateLogger();
+
+Log.Logger = log;
 
 var app = builder.Build();
 
