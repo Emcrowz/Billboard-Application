@@ -2,6 +2,7 @@
 using Billboard_BackEnd.Models;
 using Billboard_BackEnd.ModelsDTO;
 using Billboard_BackEnd.Repositories;
+using MongoDB.Bson;
 using System.Text.RegularExpressions;
 
 namespace Billboard_BackEnd.Services
@@ -9,20 +10,21 @@ namespace Billboard_BackEnd.Services
     public class BillboardListingService : IBillboardListingService
     {
         #region SETUP / INITIALISATION
-        private readonly IBillboardListingDapperContext _dbRepoDapper;
         private readonly IUserService _userService;
         private readonly IVehicleService _vehicleService;
-        //private readonly IBillboardListingMongoDBContext _dbRepoMongo;
+        private readonly IBillboardListingDapperContext _dbRepoDapper; // LocalDB
+        private readonly IBillboardListingMongoContext _dbRepoMongo; // RemoteDB - Mongo
 
-        public BillboardListingService(string connectionString)
+        public BillboardListingService(string localConnectionString, string remoteConnectionString)
         {
-            _userService = new UserService(connectionString);
-            _vehicleService = new VehicleService(connectionString);
-            _dbRepoDapper = new BillboardListingRepository(connectionString);
+            _userService = new UserService(localConnectionString);
+            _vehicleService = new VehicleService(localConnectionString);
+            _dbRepoDapper = new BillboardListingLocalRepository(localConnectionString);
+            _dbRepoMongo = new BillboardListingMongoRepository(remoteConnectionString, localConnectionString);
         }
         #endregion
 
-        #region
+        #region SERVICES
         public bool CreateListing(string username, string password, VehicleDTO vehicleForListing)
         {
             User? user = _userService.UserLoginService(username, password);
@@ -151,7 +153,7 @@ namespace Billboard_BackEnd.Services
             else
                 return false;
         }
-        #endregion
+        
 
         public IEnumerable<BillboardListingDTO?> SearchInTheListings(string srchString)
         {
@@ -196,6 +198,7 @@ namespace Billboard_BackEnd.Services
 
             return billboardListings.OrderByDescending(l => l.Price);
         }
+        #endregion
 
         //public IEnumerable<BillboardListingDTO?> SearchInTheListingsByPriceRange(string srchString)
         //{
@@ -216,5 +219,24 @@ namespace Billboard_BackEnd.Services
         //        throw new ArgumentException("Invalid price range format. Please provide a valid range in the format 'minPrice - maxPrice'.");
         //    }
         //}
+
+        #region MONGO
+        // Create
+        public async Task CreateListingMongo(BillboardListingDTO listingDTO) => await _dbRepoMongo.CreateBillboardListingMongoAsync(listingDTO);
+
+        // Get / Fetch
+        public async Task GetListingsToMongo() => await _dbRepoMongo.FetchAllBillboardListingRecordsMongoAsync();
+        public async Task GetListingsToMongo_Force() => await _dbRepoMongo.FetchAllBillboardListingsRecordsMongoAsync_Force();
+        public async Task GetListingsFromMongo() => await _dbRepoMongo.GetAllBillboardListingsMongoAsync();
+        public async Task GetListingFromMongoById(ObjectId id) => await _dbRepoMongo.GetBillboardListingByIdMongoAsync(id);
+
+        // Update / Edit
+        public async Task UpdateListingMongo(BillboardListingDTO listingDTO) => await _dbRepoMongo.UpdateBillboardListingMongoAsync(listingDTO);
+
+        // Delete
+        public async Task DeleteListingMongo(ObjectId id) => await _dbRepoMongo.DeleteBillboardListingMongoAsync(id);
+
+        public async Task DeleteAllListingsMongo() => await _dbRepoMongo.DeleteAllBillboardListingRecordsMongoAsync();
+        #endregion
     }
 }

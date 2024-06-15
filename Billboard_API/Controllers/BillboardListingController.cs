@@ -19,6 +19,7 @@ namespace Billboard_API.Controllers
         }
         #endregion
 
+        #region CORE OPERATIONS
         [HttpGet("Listings")]
         public IActionResult Listings()
         {
@@ -153,5 +154,26 @@ namespace Billboard_API.Controllers
                 return NotFound();
             }
         }
+        #endregion
+
+        #region MONGO
+        [HttpGet("Mongo/Listings")]
+        public async Task<IActionResult> GetListingsToMongo()
+        {
+            Log.Information($"Attempt to fetch {typeof(BillboardListingDTO).Name} records to Mongo DB.");
+            try
+            {
+                await _billboardService.GetListingsToMongo();
+
+                Log.Information($"Successfully fetched records from DB to Mongo DB.");
+                return Ok();
+            }
+            catch(Exception)
+            {
+                Log.Error($"Failed fetching {typeof(BillboardListingDTO).Name} records from the DB.");
+                return NotFound();
+            }
+        }
+        #endregion
     }
 }

@@ -7,12 +7,12 @@ using System.Data.SqlClient;
 
 namespace Billboard_BackEnd.Repositories
 {
-    public class BillboardListingRepository : IBillboardListingDapperContext
+    public class BillboardListingLocalRepository : IBillboardListingDapperContext
     {
         #region SETUP / INITIALISATION
-        private IDbConnection _dbConnectionLocal;
+        readonly IDbConnection _dbConnectionLocal;
 
-        public BillboardListingRepository(string localDbConnectionString)
+        public BillboardListingLocalRepository(string localDbConnectionString)
         {
             _dbConnectionLocal = new SqlConnection(localDbConnectionString);
         }
@@ -20,7 +20,7 @@ namespace Billboard_BackEnd.Repositories
 
         #region DAPPER CRUD
         public bool ExecuteCreateBillboardListingSQL(int vehicleId, int userId, string listingType)
-        {     
+        {
             return _dbConnectionLocal.Execute($"INSERT INTO BillboardListings ( [VehicleId], [UserId], [ListingType]  ) VALUES ( '{vehicleId}', '{userId}', '{listingType}' )") > 0;
         }
 

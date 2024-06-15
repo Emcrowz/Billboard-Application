@@ -1,4 +1,6 @@
 ﻿using Billboard_BackEnd.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -52,5 +54,8 @@ namespace Billboard_BackEnd.ModelsDTO
 
         [Display(Name = "Cylinder Volume")]
         public int CylinderVolume { get; set; }
+
+        [BsonId]
+        public ObjectId InternalBillboardListingId { get; set; }
     }
 }
