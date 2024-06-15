@@ -19,22 +19,22 @@ namespace Billboard_API.Controllers
         }
         #endregion
 
-        [HttpGet("GetUsers")]
-        public IActionResult GetUsers()
-        {
-            Log.Information($"Attempt to fetch {typeof(User).Name} records.");
-            IEnumerable<User> users = _userService.GetAllUsers();
-            if (users != null)
-            {
-                Log.Information($"Successfully read records from DB. Count of records: {users.Count()}");
-                return Ok(users);
-            }
-            else
-            {
-                Log.Error($"Failed to fetch {typeof(User).Name} records from the DB.");
-                return NotFound();
-            }
-        }
+        //[HttpGet("GetUsers")]
+        //public IActionResult GetUsers()
+        //{
+        //    Log.Information($"Attempt to fetch {typeof(User).Name} records.");
+        //    IEnumerable<User> users = _userService.GetAllUsers();
+        //    if (users != null)
+        //    {
+        //        Log.Information($"Successfully read records from DB. Count of records: {users.Count()}");
+        //        return Ok(users);
+        //    }
+        //    else
+        //    {
+        //        Log.Error($"Failed to fetch {typeof(User).Name} records from the DB.");
+        //        return NotFound();
+        //    }
+        //}
 
         [HttpPost("Register")]
         public IActionResult Register(UserDTO newUser)
@@ -91,30 +91,30 @@ namespace Billboard_API.Controllers
             }
         }
 
-        [HttpDelete("DeleteUserById/{id}")]
-        public IActionResult DeleteUserById(int id, string username, string password)
-        {
-            Log.Information($"Attempt to login with Username: [{username}] Password: [{password}]");
-            User? user = _userService.UserLoginService(username, password);
-            if (user != null) 
-            { 
-                Log.Information($"Attempt to delete {typeof(User).Name} record with ID: {id}");
-                if (_userService.DeleteUser(username, password))
-                {
-                    Log.Information($"Successfully deleted record with ID: {id} inside DB");
-                    return Ok();
-                }
-                else
-                {
-                    Log.Error($"Failed to delete {typeof(User).Name} record inside DB with ID: {id}");
-                    return NotFound();
-                }
-            }
-            else
-            {
-                Log.Error($"Failed to login with Username: [{username}] Password: [{password}]");
-                return Unauthorized();
-            }
-        }
+        //[HttpDelete("DeleteUserById/{id}")]
+        //public IActionResult DeleteUserById(int id, string username, string password)
+        //{
+        //    Log.Information($"Attempt to login with Username: [{username}] Password: [{password}]");
+        //    User? user = _userService.UserLoginService(username, password);
+        //    if (user != null) 
+        //    { 
+        //        Log.Information($"Attempt to delete {typeof(User).Name} record with ID: {id}");
+        //        if (_userService.DeleteUser(username, password))
+        //        {
+        //            Log.Information($"Successfully deleted record with ID: {id} inside DB");
+        //            return Ok();
+        //        }
+        //        else
+        //        {
+        //            Log.Error($"Failed to delete {typeof(User).Name} record inside DB with ID: {id}");
+        //            return NotFound();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Log.Error($"Failed to login with Username: [{username}] Password: [{password}]");
+        //        return Unauthorized();
+        //    }
+        //}
     }
 }

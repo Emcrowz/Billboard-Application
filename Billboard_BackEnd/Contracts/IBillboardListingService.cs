@@ -15,5 +15,9 @@ namespace Billboard_BackEnd.Contracts
         bool UpdateListing(string username, string password, int listingId, VehicleDTO vehicleToUpdate);
 
         bool DeleteListing(string username, string password, int id);
+
+        IEnumerable<BillboardListingDTO?> SearchInTheListings(string srchString);
+        IEnumerable<BillboardListingDTO?> SearchInTheListingByPriceFromMin();
+        IEnumerable<BillboardListingDTO?> SearchInTheListingByPriceFromMax();
     }
 }
