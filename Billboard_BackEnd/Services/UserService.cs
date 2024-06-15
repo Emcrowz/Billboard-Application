@@ -1,5 +1,6 @@
 ﻿using Billboard_BackEnd.Contracts;
 using Billboard_BackEnd.Models;
+using Billboard_BackEnd.ModelsDTO;
 using Billboard_BackEnd.Repositories;
 
 namespace Billboard_BackEnd.Services
@@ -17,9 +18,16 @@ namespace Billboard_BackEnd.Services
         #endregion
 
         #region SERVICES RELATED TO LOCAL ACTIONS
-        public bool CreateNewUser(User newUser)
+        public bool CreateNewUser(UserDTO newUser)
         {
-            if (_dbRepoDapper.ExecuteCreateUserRecordSQL(newUser))
+            if (_dbRepoDapper.ExecuteCreateUserRecordSQL(new User() {
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Email = newUser.Email,
+                Username = newUser.Username,
+                Password = newUser.Password,
+                UserCategory = 0
+            }))
                 return true;
             else
                 return false;
@@ -48,25 +56,12 @@ namespace Billboard_BackEnd.Services
             else
                 return false;
         }
-
-        public bool UpdateUserPasswordById(int id, string passwordUpdate)
-        {
-            int recordCount = _dbRepoDapper.GetNumberOfUserRecordsInDb();         
-            if (id >= 0 && id <= recordCount)
-            {
-                return _dbRepoDapper.ExecuteUpdateUserPasswordByIdSQL(id, passwordUpdate);
-            }
-            else
-                return false;
-        }
         
-        public bool DeleteUser(int id)
+        public bool DeleteUser(string username, string password)
         {
-            int recordCount = _dbRepoDapper.GetNumberOfUserRecordsInDb();
-            if (id >= 0 && id <= recordCount)
-            {
-                return _dbRepoDapper.ExecuteDeleteUserRecordByIdSQL(id);
-            }
+            User? user = UserLoginService(username, password);
+            if (user != null && !UserHasBillboardListings(user.UserId))
+                return _dbRepoDapper.ExecuteDeleteUserRecordByIdSQL(user.UserId);
             else
                 return false;
         }
@@ -83,6 +78,8 @@ namespace Billboard_BackEnd.Services
             else 
                 return null;
         }
+
+        public bool UserHasBillboardListings(int userId) => _dbRepoDapper.ExecuteCheckIfUserHasBillboardListings(userId);
         #endregion
     }
 }

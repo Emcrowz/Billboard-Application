@@ -2,6 +2,7 @@
 {
     public enum EngineType
     {
+        Unspecified,
         TwoStroke,
         FourStroke,
         SixStroke,

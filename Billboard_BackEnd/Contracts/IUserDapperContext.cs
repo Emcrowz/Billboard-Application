@@ -13,7 +13,6 @@ namespace Billboard_BackEnd.Contracts
 
         // Update
         bool ExecuteUpdateUserRecordByIdSQL(int id, User userUpdate);
-        bool ExecuteUpdateUserPasswordByIdSQL(int id, string passwordToUpdate);
 
         // Delete
         bool ExecuteDeleteUserRecordByIdSQL(int id);
@@ -23,5 +22,6 @@ namespace Billboard_BackEnd.Contracts
 
         // User Specific Actions
         User? ExecuteUserLogin(string username, string password);
+        bool ExecuteCheckIfUserHasBillboardListings(int userId);
     }
 }

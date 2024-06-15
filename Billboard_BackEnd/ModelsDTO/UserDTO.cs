@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
-namespace Billboard_BackEnd.Models
+namespace Billboard_BackEnd.ModelsDTO
 {
-    public class User
+    public class UserDTO
     {
-        [Key, Display(Name = "User ID")]
-        public int UserId { get; set; }
-
         [Display(Name = "First Name"), MaxLength(50)]
         public string FirstName { get; set; } = string.Empty;
 
@@ -22,8 +18,5 @@ namespace Billboard_BackEnd.Models
 
         [Required, MinLength(8), MaxLength(25)]
         public string Password { get; set; } = string.Empty;
-
-        [JsonIgnore, Range(0,2)]
-        public UserType UserCategory { get; set; } = 0;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Billboard_BackEnd.Models
 {
@@ -7,13 +6,14 @@ namespace Billboard_BackEnd.Models
     {
         [Key, Display(Name = "Listing ID")]
         public int ListingId { get; set; }
-        [Display(Name = "Vehilce Listing ID")]
-        public int VehicleListingId { get; set; }
-        [Display(Name = "Cars Listed")]
-        public string CarsListed { get; set; } = string.Empty;
-        [Display(Name = "Motorbikes Listed")]
-        public string MotorbikesListed { get; set; } = string.Empty;
-        [JsonIgnore, Display(Name = "Vehicle Listings")]
-        List<Vehicle> VehicleListings { get; set; } = [];
+        
+        [Required, Display(Name = "Vehicle ID")]
+        public int VehicleId { get; set; }
+
+        [Required, Display(Name = "User ID")]
+        public int UserId { get; set; }
+
+        [MaxLength(25)]
+        public string ListingType { get; set; } = string.Empty; // Will derive from Vehicle child object name.
     }
 }

@@ -7,6 +7,7 @@ namespace Billboard_BackEnd.Models
     {
         [Key, JsonIgnore, Display(Name = "Motorbike ID")]
         public int MotorbikeId { get; set; }
+
         [Display(Name = "Cylinder Volume")]
         public int CylinderVolume { get; set; }
     }

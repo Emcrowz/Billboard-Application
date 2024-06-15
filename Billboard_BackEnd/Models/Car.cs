@@ -7,9 +7,11 @@ namespace Billboard_BackEnd.Models
     {
         [Key, JsonIgnore, Display(Name = "Car ID")]
         public int CarId { get; set; }
+
         [Display(Name = "Door Count")]
         public int DoorCount { get; set; }
-        [Range(0,17)]
+
+        [Range(0,18)]
         public EngineType Engine { get; set; }
     }
 }
