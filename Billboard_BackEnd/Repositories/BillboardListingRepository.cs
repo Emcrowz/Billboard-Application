@@ -26,7 +26,7 @@ namespace Billboard_BackEnd.Repositories
 
         public BillboardListingDTO? ExecuteFetchSpecificBillboardListingDetailsAsDTOSQL(int listingId)
         {
-            return _dbConnectionLocal.QuerySingleOrDefault<BillboardListingDTO>(@"SELECT [ListingId], [ListingType], Users.[UserId], [FirstName], [LastName], Vehicles.[VehicleId], [Make], [Model], [Price], [CreationDate], [LastTechnicalCheck], [DoorCount], [Engine], [CylinderVolume] FROM BillboardListings
+            return _dbConnectionLocal.QuerySingleOrDefault<BillboardListingDTO>(@"SELECT [ListingId], [ListingType], Users.[UserId], [FirstName], [LastName], [Email], Vehicles.[VehicleId], [Make], [Model], [Price], [CreationDate], [LastTechnicalCheck], [DoorCount], [Engine], [CylinderVolume] FROM BillboardListings
 FULL OUTER JOIN Users ON Users.UserId = BillboardListings.UserId
 FULL OUTER JOIN Vehicles ON Vehicles.VehicleId = BillboardListings.VehicleId
 FULL OUTER JOIN Cars ON Vehicles.VehicleId = Cars.CarId
@@ -36,7 +36,7 @@ WHERE [ListingId] = " + $"{listingId};");
 
         public IEnumerable<BillboardListingDTO> ExecuteFetchBillboardListingDetailsAsDTOSQL()
         {
-            return _dbConnectionLocal.Query<BillboardListingDTO>(@"SELECT [ListingId], [ListingType], Users.[UserId], [FirstName], [LastName], Vehicles.[VehicleId], [Make], [Model], [Price], [CreationDate], [LastTechnicalCheck], [DoorCount], [Engine], [CylinderVolume] FROM BillboardListings
+            return _dbConnectionLocal.Query<BillboardListingDTO>(@"SELECT [ListingId], [ListingType], Users.[UserId], [FirstName], [LastName], [Email], Vehicles.[VehicleId], [Make], [Model], [Price], [CreationDate], [LastTechnicalCheck], [DoorCount], [Engine], [CylinderVolume] FROM BillboardListings
 FULL OUTER JOIN Users ON Users.UserId = BillboardListings.UserId
 FULL OUTER JOIN Vehicles ON Vehicles.VehicleId = BillboardListings.VehicleId
 FULL OUTER JOIN Cars ON Vehicles.VehicleId = Cars.CarId

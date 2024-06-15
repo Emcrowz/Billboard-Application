@@ -2,6 +2,7 @@
 using Billboard_BackEnd.Models;
 using Billboard_BackEnd.ModelsDTO;
 using Billboard_BackEnd.Repositories;
+using System.Text.RegularExpressions;
 
 namespace Billboard_BackEnd.Services
 {
@@ -152,6 +153,68 @@ namespace Billboard_BackEnd.Services
         }
         #endregion
 
+        public IEnumerable<BillboardListingDTO?> SearchInTheListings(string srchString)
+        {
+            Regex regex = new Regex(srchString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            bool priceToSearch = decimal.TryParse(srchString, out decimal priceSearch);
+            bool dateToSearch = DateTime.TryParse(srchString, out DateTime dateSearch);
 
+            IEnumerable<BillboardListingDTO?> billboardListings = _dbRepoDapper.ExecuteFetchBillboardListingDetailsAsDTOSQL();
+
+            if (priceToSearch)
+            {
+                return billboardListings.Where(l => l?.Price == priceSearch);
+            }
+            else if(dateToSearch)
+            {
+                return billboardListings.Where(l => l?.CreationDate == dateSearch);
+            }
+            else
+            {
+                switch(srchString)
+                {
+                    case "Car":
+                        return billboardListings.Where(l => l?.ListingType == typeof(Car).Name);
+                    case "Motorbike":
+                        return billboardListings.Where(l => l?.ListingType == typeof(Motorbike).Name);
+                    default:
+                        return billboardListings.Where(l => regex.IsMatch(l?.Make)|| regex.IsMatch(l?.Model));
+                }
+            }
+        }
+
+        public IEnumerable<BillboardListingDTO?> SearchInTheListingByPriceFromMin()
+        {
+            IEnumerable<BillboardListingDTO?> billboardListings = _dbRepoDapper.ExecuteFetchBillboardListingDetailsAsDTOSQL();
+
+            return billboardListings.OrderBy(l => l.Price);
+        }
+
+        public IEnumerable<BillboardListingDTO?> SearchInTheListingByPriceFromMax()
+        {
+            IEnumerable<BillboardListingDTO?> billboardListings = _dbRepoDapper.ExecuteFetchBillboardListingDetailsAsDTOSQL();
+
+            return billboardListings.OrderByDescending(l => l.Price);
+        }
+
+        //public IEnumerable<BillboardListingDTO?> SearchInTheListingsByPriceRange(string srchString)
+        //{
+        //    Regex regex = new Regex(@"(\d+(\.\d+)?)\s*-\s*(\d+(\.\d+)?)", RegexOptions.Compiled);
+        //    Match match = regex.Match(srchString);
+
+        //    if (match.Success)
+        //    {
+        //        decimal minPrice = decimal.Parse(match.Groups[1].Value);
+        //        decimal maxPrice = decimal.Parse(match.Groups[3].Value);
+
+        //        IEnumerable<BillboardListingDTO?> billboardListings = _dbRepoDapper.ExecuteFetchBillboardListingDetailsAsDTOSQL();
+
+        //        return billboardListings.Where(l => l?.Price >= minPrice && l?.Price <= maxPrice).OrderDescending();
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("Invalid price range format. Please provide a valid range in the format 'minPrice - maxPrice'.");
+        //    }
+        //}
     }
 }

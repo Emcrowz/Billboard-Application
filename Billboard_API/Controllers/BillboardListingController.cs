@@ -53,6 +53,59 @@ namespace Billboard_API.Controllers
             }
         }
 
+        [HttpGet("Listings/Search")]
+        public IActionResult ListingsSearch(string srchString)
+        {
+            Log.Information($"Attempt to search {typeof(BillboardListingDTO).Name} records with: [{srchString}].");
+            IEnumerable<BillboardListingDTO?> listings = _billboardService.SearchInTheListings(srchString);
+            if (listings != null)
+            {
+                Log.Information($"Successfully completed search. Search string: [{srchString}] Count of records: {listings.Count()}");
+                return Ok(listings);
+            }
+            else
+            {
+                Log.Error($"Failed to search {typeof(BillboardListingDTO).Name} records from the DB.");
+                return NotFound();
+            }
+        }
+
+        [HttpGet("Listings/Sort/FromMin")]
+        public IActionResult ListingsSortPriceFromMin()
+        {
+            Log.Information($"Attempt to sort {typeof(BillboardListingDTO).Name} records by ascending order");
+            IEnumerable<BillboardListingDTO?> listings = _billboardService.SearchInTheListingByPriceFromMin();
+
+            if (listings != null)
+            {
+                Log.Information($"Successfully completed sorting by ascending order.");
+                return Ok(listings);
+            }
+            else
+            {
+                Log.Error($"Failed to sort {typeof(BillboardListingDTO).Name} records.");
+                return NotFound();
+            }
+        }
+
+        [HttpGet("Listings/Sort/FromMax")]
+        public IActionResult ListingsSortPriceFromMax()
+        {
+            Log.Information($"Attempt to sort {typeof(BillboardListingDTO).Name} records by descending order.");
+            IEnumerable<BillboardListingDTO?> listings = _billboardService.SearchInTheListingByPriceFromMax();
+
+            if (listings != null)
+            {
+                Log.Information($"Successfully completed sorting by ascending order.");
+                return Ok(listings);
+            }
+            else
+            {
+                Log.Error($"Failed to sort {typeof(BillboardListingDTO).Name} records.");
+                return NotFound();
+            }
+        }
+
         [HttpPost("Listings")]
         public IActionResult CreateListing(string username, string password, VehicleDTO vehicleListing)
         {
