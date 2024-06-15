@@ -22,25 +22,6 @@ namespace Billboard_BackEnd.Services
         public Car? GetCarById(int id) => _dbRepoDapper.ExecuteFetchCarRecordByIdSQL(id);
         public IEnumerable<Motorbike> GetAllMotorbikes() => _dbRepoDapper.ExecuteFetchMotorbikeRecordsSQL();
         public Motorbike? GetMotorbikeById(int id) => _dbRepoDapper.ExecuteFetchMotorbikeRecordByIdSQL(id);
-        public List<Vehicle> GetAllVehiclesRecords()
-        {
-            var listOfCars = _dbRepoDapper.ExecuteFetchCarRecordsSQL().ToList();
-            var listOfMotorbikes = _dbRepoDapper.ExecuteFetchMotorbikeRecordsSQL().ToList();
-            List<Vehicle> listOfVehicles = [];
-
-            // Solution in very 'primitive' way. Will find better in due time.
-            foreach (var car in listOfCars)
-            {
-                listOfVehicles.Add(car);
-            }
-            foreach (var motorbike in listOfMotorbikes)
-            {
-                listOfVehicles.Add(motorbike);
-            }
-
-            return listOfVehicles;
-        }
-
 
         public bool CreateNewCar(Car newCar)
         {

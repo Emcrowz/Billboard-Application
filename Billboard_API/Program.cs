@@ -3,10 +3,19 @@ using Billboard_BackEnd.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuration setup
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddEnvironmentVariables()
     .Build();
+
+// Logger setup
+var log = new LoggerConfiguration()
+    .ReadFrom.Configuration(config)
+    .CreateLogger();
+
+Log.Logger = log;
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -16,15 +25,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Local Repo
-builder.Services.AddSingleton<IVehicleService, VehicleService>(_ => new VehicleService(config.GetConnectionString("LocalDb")));
 builder.Services.AddSingleton<IUserService, UserService>(_ => new UserService(config.GetConnectionString("LocalDb")));
-
-// Logger setup
-var log = new LoggerConfiguration()
-    .ReadFrom.Configuration(config)
-    .CreateLogger();
-    
-Log.Logger = log;
+builder.Services.AddSingleton<IBillboardListingService, BillboardListingService>(_ => new BillboardListingService(config.GetConnectionString("LocalDb")));
 
 var app = builder.Build();
 

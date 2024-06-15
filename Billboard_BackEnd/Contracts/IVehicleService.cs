@@ -9,7 +9,6 @@ namespace Billboard_BackEnd.Contracts
         bool CreateNewMotorbike(Motorbike newMotorbike);
 
         // Read / Get
-        List<Vehicle> GetAllVehiclesRecords();
         IEnumerable<Car> GetAllCars();
         Car? GetCarById(int id);
         IEnumerable<Motorbike> GetAllMotorbikes();

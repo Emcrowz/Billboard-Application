@@ -1,11 +1,12 @@
 ﻿using Billboard_BackEnd.Models;
+using Billboard_BackEnd.ModelsDTO;
 
 namespace Billboard_BackEnd.Contracts
 {
     public interface IUserService
     {
         // Create 
-        bool CreateNewUser(User newUser);
+        bool CreateNewUser(UserDTO newUser);
 
         // Read / Get
         IEnumerable<User> GetAllUsers();
@@ -13,10 +14,9 @@ namespace Billboard_BackEnd.Contracts
 
         // Update
         bool UpdateUserDetailsById(int id, User userUpdate);
-        bool UpdateUserPasswordById(int id, string passwordUpdate);
 
         // Delete
-        bool DeleteUser(int id);
+        bool DeleteUser(string username, string password);
 
         // User Specific operations
         User? UserLoginService(string username, string password);
