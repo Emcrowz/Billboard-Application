@@ -13,7 +13,7 @@ namespace Billboard_BackEnd.Contracts
         User? GetUserById(int id);
 
         // Update
-        bool UpdateUserDetailsById(int id, User userUpdate);
+        bool UpdateUserDetailsById(int id, UserDTO userUpdate);
 
         // Delete
         bool DeleteUser(string username, string password);

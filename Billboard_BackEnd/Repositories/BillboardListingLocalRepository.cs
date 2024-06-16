@@ -7,21 +7,25 @@ using System.Data.SqlClient;
 
 namespace Billboard_BackEnd.Repositories
 {
-    public class BillboardListingRepository : IBillboardListingDapperContext
+    public class BillboardListingLocalRepository : IBillboardListingDapperContext
     {
         #region SETUP / INITIALISATION
-        private IDbConnection _dbConnectionLocal;
+        readonly IDbConnection _dbConnectionLocal;
 
-        public BillboardListingRepository(string localDbConnectionString)
+        public BillboardListingLocalRepository(string localDbConnectionString)
         {
             _dbConnectionLocal = new SqlConnection(localDbConnectionString);
         }
         #endregion
 
         #region DAPPER CRUD
-        public bool ExecuteCreateBillboardListingSQL(int vehicleId, int userId, string listingType)
-        {     
-            return _dbConnectionLocal.Execute($"INSERT INTO BillboardListings ( [VehicleId], [UserId], [ListingType]  ) VALUES ( '{vehicleId}', '{userId}', '{listingType}' )") > 0;
+        public bool ExecuteCreateBillboardListingSQL(BillboardListing newListing)
+        {
+            bool action;
+            action = _dbConnectionLocal.Execute($"INSERT INTO BillboardListings ( [VehicleId], [UserId], [ListingType]  ) VALUES ( '{newListing.VehicleId}', '{newListing.UserId}', '{newListing.ListingType}' )") > 0;
+            int additionIndex = _dbConnectionLocal.QuerySingle<int>($"SELECT MAX(VehicleId) FROM Vehicles");
+            newListing.ListingId = additionIndex;
+            return action;
         }
 
         public BillboardListingDTO? ExecuteFetchSpecificBillboardListingDetailsAsDTOSQL(int listingId)
@@ -51,11 +55,6 @@ FULL OUTER JOIN Motorbikes ON Vehicles.VehicleId = Motorbikes.MotorbikeId;");
         public IEnumerable<BillboardListing> ExecuteFetchBillboardListingRecordsSQL()
         {
             return _dbConnectionLocal.Query<BillboardListing>($"SELECT [ListingId], [UserId], [VehicleId], [ListingType] FROM BillboardListings");
-        }
-
-        public bool ExecuteUpdateBillboardListingRecordByIdSQL(int listingId, BillboardListing billboardListingUpdate, Vehicle vehicleListedUpdate)
-        {
-            throw new NotImplementedException();
         }
 
         public bool ExecuteDeleteBillboardListingRecordByIdSQL(int id, int vehicleId)

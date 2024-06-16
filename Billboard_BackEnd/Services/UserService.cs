@@ -35,23 +35,21 @@ namespace Billboard_BackEnd.Services
 
         public IEnumerable<User> GetAllUsers() => _dbRepoDapper.ExecuteFetchUserRecordsSQL();
 
-        public User? GetUserById(int id)
-        {
-            int recordCount = _dbRepoDapper.GetNumberOfUserRecordsInDb();
-            if (id >= 0 && id <= recordCount)
-            {
-                return _dbRepoDapper.ExecuteFetchUserRecordByIdSQL(id);
-            }
-            else
-                return null;
-        }
+        public User? GetUserById(int id) => _dbRepoDapper.ExecuteFetchUserRecordByIdSQL(id);
 
-        public bool UpdateUserDetailsById(int id, User userUpdate)
+        public bool UpdateUserDetailsById(int id, UserDTO userUpdate)
         {
             int recordCount = _dbRepoDapper.GetNumberOfUserRecordsInDb();
             if (id >= 0 && id <= recordCount)
             {
-                return _dbRepoDapper.ExecuteUpdateUserRecordByIdSQL(id, userUpdate);
+                return _dbRepoDapper.ExecuteUpdateUserRecordByIdSQL(id, new User()
+                {
+                    FirstName = userUpdate.FirstName,
+                    LastName = userUpdate.LastName,
+                    Email = userUpdate.Email,
+                    Username = userUpdate.Username,
+                    Password = userUpdate.Password
+                });
             }
             else
                 return false;

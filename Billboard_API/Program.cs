@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen();
 
 // Local Repo
 builder.Services.AddSingleton<IUserService, UserService>(_ => new UserService(config.GetConnectionString("LocalDb")));
-builder.Services.AddSingleton<IBillboardListingService, BillboardListingService>(_ => new BillboardListingService(config.GetConnectionString("LocalDb")));
+builder.Services.AddSingleton<IBillboardListingService, BillboardListingService>(_ => new BillboardListingService(config.GetConnectionString("LocalDb"), config.GetConnectionString("MongoDb")));
 
 var app = builder.Build();
 
