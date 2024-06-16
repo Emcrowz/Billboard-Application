@@ -25,10 +25,21 @@ namespace Billboard_BackEnd.Repositories
 
         #region MONGO CRUD
         // Create
-        public async Task CreateBillboardListingMongoAsync(BillboardListingDTO listingDTO) => await _listingDTOMongo.InsertOneAsync(listingDTO);
+        public async Task<bool> CreateBillboardListingMongoAsync(BillboardListingDTO listingDTO)
+        {
+            try
+            {
+                await _listingDTOMongo.InsertOneAsync(listingDTO);
+                return true;
+            }
+            catch(Exception)
+            {
+                throw new Exception("Could not insert record to MongoDB.");
+            }
+        }
 
         // Get
-        public async Task<IEnumerable<BillboardListingDTO>> FetchAllBillboardListingRecordsMongoAsync()
+        public async Task<IEnumerable<BillboardListingDTO?>> FetchAllBillboardListingRecordsMongoAsync()
         {
             List<BillboardListingDTO> billboardListings = await GetAllBillboardListingsMongoAsync();
 
@@ -45,7 +56,7 @@ namespace Billboard_BackEnd.Repositories
             return billboardListings;
         }
 
-        public async Task<IEnumerable<BillboardListingDTO>> FetchAllBillboardListingsRecordsMongoAsync_Force()
+        public async Task<IEnumerable<BillboardListingDTO?>> FetchAllBillboardListingsRecordsMongoAsync_Force()
         {
             List<BillboardListingDTO> billboardListings = await GetAllBillboardListingsMongoAsync();
 
@@ -72,6 +83,60 @@ namespace Billboard_BackEnd.Repositories
         public async Task DeleteBillboardListingMongoAsync(ObjectId id) => await _listingDTOMongo.DeleteOneAsync(l => l.InternalBillboardListingId == id);
 
         public async Task DeleteAllBillboardListingRecordsMongoAsync() => await _listingDTOMongo.DeleteManyAsync(new BsonDocument());
+        #endregion
+
+        #region SEARCH OPERATIONS
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByVehicleMakeOrModelAsync(string srchString)
+        {
+            FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Regex("Make", new BsonRegularExpression(srchString, "i")) | Builders<BillboardListingDTO>.Filter.Regex("Model", new BsonRegularExpression(srchString, "i"));
+
+            return await _listingDTOMongo.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByVehicleTypeAsync(string srchString)
+        {
+            FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Regex("ListingType", new BsonRegularExpression(srchString, "i"));
+
+            return await _listingDTOMongo.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByMinimumListingPriceAsync(decimal srchPrice)
+        {
+            if (srchPrice > 0)
+            {
+                FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Gte("ListingType", srchPrice);
+
+                return await _listingDTOMongo.Find(filter).ToListAsync();
+            }
+            else
+                return [];
+        }
+
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByMaximumListingPriceAsync(decimal srchPrice)
+        {
+            if (srchPrice > 0)
+            {
+                FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Lte("ListingType", srchPrice);
+
+                return await _listingDTOMongo.Find(filter).ToListAsync();
+            }
+            else
+                return [];
+        }
+
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByMinimumVehicleCreationTimeAsync(DateTime srchDate)
+        {
+            FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Gte("CreationDate", srchDate);
+
+            return await _listingDTOMongo.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<BillboardListingDTO>> SearchBillboardListingsByMaximumVehicleCreationTimeAsync(DateTime srchDate)
+        {
+            FilterDefinition<BillboardListingDTO> filter = Builders<BillboardListingDTO>.Filter.Lte("CreationDate", srchDate);
+
+            return await _listingDTOMongo.Find(filter).ToListAsync();
+        }
         #endregion
     }
 }

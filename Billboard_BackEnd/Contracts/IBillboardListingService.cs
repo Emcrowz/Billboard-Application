@@ -7,16 +7,16 @@ namespace Billboard_BackEnd.Contracts
     public interface IBillboardListingService
     {
         #region LOCAL OPERATIONS
-        bool CreateListing(string username, string password, VehicleDTO vehicleForListing);
+        Task<bool> CreateListing(string username, string password, VehicleDTO vehicleForListing);
 
         BillboardListing? GetListing(int id);
         IEnumerable<BillboardListing?> GetListings();
         BillboardListingDTO? GetListingDTO(int id);
         IEnumerable<BillboardListingDTO?> GetListingsDTO();
 
-        bool UpdateListing(string username, string password, int listingId, VehicleDTO vehicleToUpdate);
+        Task<bool> UpdateListing(string username, string password, int listingId, VehicleDTO vehicleToUpdate);
 
-        bool DeleteListing(string username, string password, int id);
+        Task<bool> DeleteListing(string username, string password, int id);
 
         IEnumerable<BillboardListingDTO?> SearchInTheListings(string srchString);
         IEnumerable<BillboardListingDTO?> SearchInTheListingByPriceFromMin();
@@ -25,20 +25,28 @@ namespace Billboard_BackEnd.Contracts
 
         #region REMOTE | ASYNC OPERATIONS
         // Create
-        Task CreateListingMongo(BillboardListingDTO listingDTO);
+        Task CreateListingMongoAsync(BillboardListingDTO listingDTO);
 
         // Get / Fetch
-        Task GetListingsToMongo();
-        Task GetListingsToMongo_Force();
-        Task GetListingsFromMongo();
-        Task GetListingFromMongoById(ObjectId id);
+        Task GetListingsToMongoAsync(); // Operation to get records TO MongoDB FROM LocalDB
+        Task GetListingsToMongoAsync_Force(); // Operation to get records TO MongoDB FROM LocalDB. By 'Force'
+        Task<List<BillboardListingDTO?>> GetListingsFromMongoAsync();
+        Task<BillboardListingDTO?> GetListingFromMongoByIdAsync(ObjectId id);
 
         // Update / Edit
-        Task UpdateListingMongo(BillboardListingDTO listingDTO);
+        Task UpdateListingMongoAsync(BillboardListingDTO listingDTO);
 
         // Delete
-        Task DeleteListingMongo(ObjectId id);
-        Task DeleteAllListingsMongo();
+        Task DeleteListingMongoAsync(ObjectId id);
+        Task DeleteAllListingsMongoAsync();
+
+        // Search Operations
+        Task<List<BillboardListingDTO>> SearchByVehicleMakeOrModelAsync(string srchString);
+        Task<List<BillboardListingDTO>> SearchByVehicleTypeAsync(string srchString);
+        Task<List<BillboardListingDTO>> SearchByListedMinPriceAsync(decimal srchString);
+        Task<List<BillboardListingDTO>> SearchByListedMaxPriceAsync(decimal srchString);
+        Task<List<BillboardListingDTO>> SearchByListedMinVehicleCreationDateAsync(DateTime srchString);
+        Task<List<BillboardListingDTO>> SearchByListedMaxVehicleCreationDateAsync(DateTime srchString);
         #endregion
     }
 }

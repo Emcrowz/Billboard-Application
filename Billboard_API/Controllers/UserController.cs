@@ -56,13 +56,7 @@ namespace Billboard_API.Controllers
         public IActionResult UpdateUser(int id, UserDTO userUpdate)
         {
             Log.Information($"Attempt to update {typeof(User).Name} record with ID: {id}.");
-            if (_userService.UpdateUserDetailsById(id, new User() {
-                FirstName = userUpdate.FirstName,
-                LastName = userUpdate.LastName,
-                Email = userUpdate.Email,
-                Username = userUpdate.Username,
-                Password = userUpdate.Password
-            }))
+            if (_userService.UpdateUserDetailsById(id, userUpdate))
             {
                 Log.Information($"Successfully updated {typeof(User).Name} ID: {id} instance.");
                 return Ok();
