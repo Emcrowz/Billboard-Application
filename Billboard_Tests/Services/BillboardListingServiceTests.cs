@@ -220,7 +220,7 @@ public class BillboardListingServiceTests
 
         User? user = testUser_Bad_empty;
         // Act
-        if(testUser_Bad_empty != null)
+        if (testUser_Bad_empty != null)
         {
             Motorbike motorbike = new()
             {
@@ -263,7 +263,7 @@ public class BillboardListingServiceTests
             };
             billboardListingsDTO.Add(newListingToMongo);
         }
-   
+
         // Assert
         Assert.DoesNotContain(user, users);
         Assert.NotEqual("Test", user.FirstName);
@@ -351,6 +351,283 @@ public class BillboardListingServiceTests
         Assert.Empty(vehicles);
         Assert.Empty(billboardListings);
         Assert.Empty(billboardListingsDTO);
+    }
+    #endregion
+
+    #region UpdateListing METHOD Tests
+    [Fact]
+    public void UpdateListing_UpdateSuccessful_Car()
+    {
+        // Arange
+        User testUser_Correct = new()
+        {
+            UserId = 4,
+            FirstName = "Test",
+            LastName = "Dummy",
+            Email = "Testy@Test.com",
+            Username = "Test",
+            Password = "ForScience123",
+            UserCategory = 0
+        };
+        User testUser_Bad_empty = new();
+
+        Car carOne = new()
+        {
+            VehicleId = 0,
+            Make = "A",
+            Model = "B",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 4,
+            Engine = (EngineType)4
+        };
+        Motorbike motorbikeOne = new()
+        {
+            VehicleId = 1,
+            Make = "Bike",
+            Model = "Test",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 420
+        };
+        Motorbike motorbikeTwo = new()
+        {
+            VehicleId = 2,
+            Make = "Bikest",
+            Model = "Testes",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 210
+        };
+        Car carTwo = new()
+        {
+            VehicleId = 3,
+            Make = "C",
+            Model = "D",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 2,
+            Engine = (EngineType)6
+        };
+        Motorbike motorbikeThree = new()
+        {
+            VehicleId = 4,
+            Make = "Testa",
+            Model = "Bikest",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 105
+        };
+        Car carThree = new()
+        {
+            VehicleId = 5,
+            Make = "E",
+            Model = "F",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 4,
+            Engine = (EngineType)8
+        };
+
+        List<User> users = new() { testUser_Correct };
+        List<Vehicle> vehicles = new() { carOne, motorbikeOne, motorbikeTwo, carTwo, motorbikeThree, carThree };
+        List<BillboardListing> billboardListings = new() { 
+            new BillboardListing() { ListingId = 0, ListingType = "Car", UserId = 4, VehicleId = 0 },
+            new BillboardListing() { ListingId = 1, ListingType = "Car", UserId = 4, VehicleId = 3 },
+            new BillboardListing() { ListingId = 2, ListingType = "Motorbike", UserId = 4, VehicleId = 1 },
+            new BillboardListing() { ListingId = 3, ListingType = "Motorbike", UserId = 4, VehicleId = 4 },
+        };
+        List<BillboardListingDTO> billboardListingsDTO = new() { 
+            new BillboardListingDTO() { ListingId = 0, ListingType = "Car", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 0, Make = "A", Model = "B", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 4, Engine = (EngineType)4 },
+            new BillboardListingDTO() { ListingId = 1, ListingType = "Car", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 3, Make = "C", Model = "D", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 2, Engine = (EngineType)6 },
+            new BillboardListingDTO() { ListingId = 2, ListingType = "Motorbike", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Bike", Model = "Test", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 420 },
+            new BillboardListingDTO() { ListingId = 3, ListingType = "Motorbike", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Testa", Model = "Bikest", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 105 }
+        };
+
+        string usernameInput = "Test";
+        string passwordInput = "ForScience123";
+        int indexInput = 1;
+        VehicleDTO vehicleDTOInput = new() { Make = "REPLACE", Model = "REPLACY", Price = 123.45m, CreationDate = DateTime.Parse("2024-06-16"), LastTechnicalCheck = DateTime.Parse("2024-06-16"), DoorCount = 4, Engine = (EngineType)12 };
+
+        userService.Setup(login => login.UserLoginService(usernameInput, passwordInput)).Returns(testUser_Correct).Verifiable();
+
+        User? user = testUser_Correct;
+
+        // Act
+        bool userAuthenticated = user.Username == usernameInput && user.Password == passwordInput;
+        bool userHasListing = billboardListingsDTO.Any(l => l.ListingId == indexInput && l.UserId == user.UserId);
+        vehicleService.Setup(v => v.UpdateCarById(indexInput, new Car() { Make = vehicleDTOInput.Make, Model = vehicleDTOInput.Model, Price = vehicleDTOInput.Price, CreationDate = vehicleDTOInput.CreationDate, LastTechnicalCheck = vehicleDTOInput.LastTechnicalCheck, DoorCount = vehicleDTOInput.DoorCount, Engine = vehicleDTOInput.Engine })).Returns(true);
+        BillboardListingDTO carToChange = billboardListingsDTO.Find(l => l.ListingId == indexInput);
+
+        BillboardListingDTO listingToUpdate = new()
+        {
+            ListingId = carToChange.ListingId, // Same
+            ListingType = carToChange.ListingType, // Same
+            UserId = carToChange.UserId, // Same
+            FirstName = carToChange.FirstName, // Same
+            LastName = carToChange.LastName, // Same
+            Email = carToChange.Email, // Same
+            VehicleId = carToChange.VehicleId, // Same
+            Make = vehicleDTOInput.Make, // Alter
+            Model = vehicleDTOInput.Model, // Alter
+            Price = vehicleDTOInput.Price, // Alter
+            CreationDate = vehicleDTOInput.CreationDate, // Alter
+            LastTechnicalCheck = vehicleDTOInput.LastTechnicalCheck, // Alter
+            DoorCount = vehicleDTOInput.DoorCount, // Alter
+            Engine = vehicleDTOInput.Engine, // Alter
+            InternalBillboardListingId = carToChange.InternalBillboardListingId // Must be Same.
+        };
+
+        listingMongoDb.Setup(l => l.UpdateBillboardListingMongoAsync(listingToUpdate)).Verifiable();
+
+        // Arrange
+        Mock.Verify();
+        Assert.True(userAuthenticated);
+        Assert.True(userHasListing);
+        Assert.Equal(vehicleDTOInput.Make, listingToUpdate.Make);
+    }
+
+    [Fact]
+    public void UpdateListing_UpdateSuccessful_Motorbike()
+    {
+        // Arange
+        User testUser_Correct = new()
+        {
+            UserId = 4,
+            FirstName = "Test",
+            LastName = "Dummy",
+            Email = "Testy@Test.com",
+            Username = "Test",
+            Password = "ForScience123",
+            UserCategory = 0
+        };
+        User testUser_Bad_empty = new();
+
+        Car carOne = new()
+        {
+            VehicleId = 0,
+            Make = "A",
+            Model = "B",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 4,
+            Engine = (EngineType)4
+        };
+        Motorbike motorbikeOne = new()
+        {
+            VehicleId = 1,
+            Make = "Bike",
+            Model = "Test",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 420
+        };
+        Motorbike motorbikeTwo = new()
+        {
+            VehicleId = 2,
+            Make = "Bikest",
+            Model = "Testes",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 210
+        };
+        Car carTwo = new()
+        {
+            VehicleId = 3,
+            Make = "C",
+            Model = "D",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 2,
+            Engine = (EngineType)6
+        };
+        Motorbike motorbikeThree = new()
+        {
+            VehicleId = 4,
+            Make = "Testa",
+            Model = "Bikest",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            CylinderVolume = 105
+        };
+        Car carThree = new()
+        {
+            VehicleId = 5,
+            Make = "E",
+            Model = "F",
+            Price = 420.69m,
+            CreationDate = DateTime.Now,
+            LastTechnicalCheck = DateTime.Now,
+            DoorCount = 4,
+            Engine = (EngineType)8
+        };
+
+        List<User> users = new() { testUser_Correct };
+        List<Vehicle> vehicles = new() { carOne, motorbikeOne, motorbikeTwo, carTwo, motorbikeThree, carThree };
+        List<BillboardListing> billboardListings = new() {
+            new BillboardListing() { ListingId = 0, ListingType = "Car", UserId = 4, VehicleId = 0 },
+            new BillboardListing() { ListingId = 1, ListingType = "Car", UserId = 4, VehicleId = 3 },
+            new BillboardListing() { ListingId = 2, ListingType = "Motorbike", UserId = 4, VehicleId = 1 },
+            new BillboardListing() { ListingId = 3, ListingType = "Motorbike", UserId = 4, VehicleId = 4 },
+        };
+        List<BillboardListingDTO> billboardListingsDTO = new() {
+            new BillboardListingDTO() { ListingId = 0, ListingType = "Car", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 0, Make = "A", Model = "B", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 4, Engine = (EngineType)4 },
+            new BillboardListingDTO() { ListingId = 1, ListingType = "Car", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 3, Make = "C", Model = "D", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 2, Engine = (EngineType)6 },
+            new BillboardListingDTO() { ListingId = 2, ListingType = "Motorbike", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Bike", Model = "Test", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 420 },
+            new BillboardListingDTO() { ListingId = 3, ListingType = "Motorbike", UserId = 4, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Testa", Model = "Bikest", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 105 }
+        };
+
+        string usernameInput = "Test";
+        string passwordInput = "ForScience123";
+        int indexInput = 2;
+        VehicleDTO vehicleDTOInput = new() { Make = "REPLACE", Model = "REPLACY", Price = 123.45m, CreationDate = DateTime.Parse("2024-06-16"), LastTechnicalCheck = DateTime.Parse("2024-06-16"), CylinderVolume = 666 };
+
+        userService.Setup(login => login.UserLoginService(usernameInput, passwordInput)).Returns(testUser_Correct).Verifiable();
+
+        User? user = testUser_Correct;
+
+        // Act
+        bool userAuthenticated = user.Username == usernameInput && user.Password == passwordInput;
+        bool userHasListing = billboardListingsDTO.Any(l => l.ListingId == indexInput && l.UserId == user.UserId);
+        vehicleService.Setup(v => v.UpdateCarById(indexInput, new Car() { Make = vehicleDTOInput.Make, Model = vehicleDTOInput.Model, Price = vehicleDTOInput.Price, CreationDate = vehicleDTOInput.CreationDate, LastTechnicalCheck = vehicleDTOInput.LastTechnicalCheck, DoorCount = vehicleDTOInput.DoorCount, Engine = vehicleDTOInput.Engine })).Returns(true);
+        BillboardListingDTO carToChange = billboardListingsDTO.Find(l => l.ListingId == indexInput);
+
+        BillboardListingDTO listingToUpdate = new()
+        {
+            ListingId = carToChange.ListingId, // Same
+            ListingType = carToChange.ListingType, // Same
+            UserId = carToChange.UserId, // Same
+            FirstName = carToChange.FirstName, // Same
+            LastName = carToChange.LastName, // Same
+            Email = carToChange.Email, // Same
+            VehicleId = carToChange.VehicleId, // Same
+            Make = vehicleDTOInput.Make, // Alter
+            Model = vehicleDTOInput.Model, // Alter
+            Price = vehicleDTOInput.Price, // Alter
+            CreationDate = vehicleDTOInput.CreationDate, // Alter
+            LastTechnicalCheck = vehicleDTOInput.LastTechnicalCheck, // Alter
+            CylinderVolume = vehicleDTOInput.CylinderVolume, // Alter
+            InternalBillboardListingId = carToChange.InternalBillboardListingId // Must be Same.
+        };
+
+        listingMongoDb.Setup(l => l.UpdateBillboardListingMongoAsync(listingToUpdate)).Verifiable();
+
+        // Arrange
+        Mock.Verify();
+        Assert.True(userAuthenticated);
+        Assert.True(userHasListing);
+        Assert.Equal(vehicleDTOInput.CylinderVolume, listingToUpdate.CylinderVolume);
     }
     #endregion
 }
