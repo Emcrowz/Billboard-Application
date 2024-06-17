@@ -521,4 +521,76 @@ public class BillboardListingServiceTests
         Assert.Null(user);
     }
     #endregion
+
+    #region DeleteListing
+    [Fact]
+    public void DeleteListing_UserAuthenticated_SuccessfullDelete()
+    {
+        // Assert
+        List<BillboardListingDTO> billboardListingsDTO = new() {
+            new BillboardListingDTO() { ListingId = 1, ListingType = "Car", UserId = 0, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 3, Make = "C", Model = "D", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 2, Engine = (EngineType)6 },
+            new BillboardListingDTO() { ListingId = 2, ListingType = "Motorbike", UserId = 0, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Bike", Model = "Test", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 420 }, 
+        };
+
+        string usernameInput = "Test";
+        string passwordInput = "ForScience123";
+        int indexInput = 2;
+
+        userService.Setup(login => login.UserLoginService(usernameInput, passwordInput)).Returns(users.Find(u => u.Username == usernameInput && u.Password == passwordInput)).Verifiable();
+
+        // Act
+        User? user = userService.Object.UserLoginService(usernameInput, passwordInput);
+
+        BillboardListingDTO? listing = billboardListingsDTO.FirstOrDefault(l => l.ListingId == indexInput);
+        if (user != null)
+        {
+            
+            if(listing != null && listing.UserId == user.UserId)
+            {
+                listingMongoDb.Setup(delete => delete.DeleteBillboardListingMongoAsync(listing.InternalBillboardListingId));
+                billboardListingsDTO.Remove(listing);
+            }
+        }
+
+        // Assert
+        Assert.NotNull(user);
+        Assert.DoesNotContain(listing, billboardListingsDTO);
+        Assert.Equal(1, billboardListingsDTO.Count());
+    }
+
+    [Fact]
+    public void DeleteListing_UserDidNotAuthenticate_FailedDelete()
+    {
+        // Assert
+        List<BillboardListingDTO> billboardListingsDTO = new() {
+            new BillboardListingDTO() { ListingId = 1, ListingType = "Car", UserId = 0, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 3, Make = "C", Model = "D", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, DoorCount = 2, Engine = (EngineType)6 },
+            new BillboardListingDTO() { ListingId = 2, ListingType = "Motorbike", UserId = 0, FirstName = "Test", LastName = "Dummy", Email = "Testy@Test.com", VehicleId = 1 , Make = "Bike", Model = "Test", Price = 420.69m, CreationDate = DateTime.Now, LastTechnicalCheck = DateTime.Now, CylinderVolume = 420 },
+        };
+
+        string usernameInput = "SIBDBSINDS";
+        string passwordInput = "ForSIOSONDMSMSScience123";
+        int indexInput = 2;
+
+        userService.Setup(login => login.UserLoginService(usernameInput, passwordInput)).Returns(users.Find(u => u.Username == usernameInput && u.Password == passwordInput)).Verifiable();
+
+        // Act
+        User? user = userService.Object.UserLoginService(usernameInput, passwordInput);
+
+        BillboardListingDTO? listing = billboardListingsDTO.FirstOrDefault(l => l.ListingId == indexInput);
+        if (user != null)
+        {
+
+            if (listing != null && listing.UserId == user.UserId)
+            {
+                listingMongoDb.Setup(delete => delete.DeleteBillboardListingMongoAsync(listing.InternalBillboardListingId));
+                billboardListingsDTO.Remove(listing);
+            }
+        }
+
+        // Assert
+        Assert.Null(user);
+        Assert.Contains(listing, billboardListingsDTO);
+        Assert.Equal(2, billboardListingsDTO.Count());
+    }
+    #endregion
 }
