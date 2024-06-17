@@ -12,7 +12,6 @@ NuGet packages used:
 - System.Data.SqlClient(4.8.6)
 - MongoDB.Driver(2.26.0)
 
-Actions: 
 > [!NOTE]
 > Responsible for creating users, vehicles and billboard listings, storing, updating and deleting inside databases - both local (SSMS) and remote (MongoDB). Also contains servises that are crucial for the user validation actions, type checkings, search functions and routing interactions from the API.
 >
@@ -31,7 +30,6 @@ NuGet packages used:
 
 References: `Billboard_BackEnd`
 
-Actions:
 BillboardListing
 - __Get__ - _/BillboardListings/Listings_ - Fetches the billboard listing records **from the MongoDB.**
 - __Post__ - _/BillboardListings/Listings_ - Creates a billboard listing (IF USER IS REGISTERED). **Created on the SSMS and MongoDB.**
@@ -66,4 +64,4 @@ NuGet packages used:
 References: `Billboard_BackEnd`; `Billboard_API`; `Billboard_FrontEnd`
 
 > [!NOTE]
-> Currently Unit tests are made only for `Billboard_BackEnd` service that is responsible for the billboard listings.
+> Currently Unit tests are made only for `Billboard_BackEnd` - `BillboardListingService` that is solely responsible for the billboard listings. Not to mention it takes care of vehicle creation and user validation (is user registered or not).
